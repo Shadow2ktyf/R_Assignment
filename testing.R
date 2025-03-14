@@ -91,14 +91,24 @@ lapply(1:10, teosinte_chromosome_increase)
 teosinte_chromosome_decrease <- function(chr) {
   joint_snp_teosinte %>%
     filter(Chromosome == chr) %>%
-    mutate(Numeric_Position = suppressWarnings(as.numeric(Position))) %>%  # Convert only numeric values
-    arrange(is.na(Numeric_Position), desc(Numeric_Position)) %>%  # Sort numerically, keep "unknown" & "multiple" at bottom
-    select(-Numeric_Position) %>%  # Remove temporary numeric column
-    mutate(across(4:ncol(.), ~ ifelse(. == "?/?", "-/-", .))) %>%  # Replace "?/?" with "-/-" from 4th column onwards
+    mutate(Numeric_Position = suppressWarnings(as.numeric(Position))) %>% 
+    arrange(is.na(Numeric_Position), desc(Numeric_Position)) %>%  
+    select(-Numeric_Position) %>%  
+    mutate(across(4:ncol(.), ~ ifelse(. == "?/?", "-/-", .))) %>%  
     write_tsv(paste0("teosinte_data/teosinte_chrom", chr, "_decrease.txt"))
 }
 
 lapply(1:10, teosinte_chromosome_decrease)
+
+
+
+genotypes_long <- raw_genotypes %>%
+  pivot_longer(cols = -c(Sample_ID, JG_OTU, Group), names_to = "SNP_ID", values_to = "Genotype")
+
+
+joint_snpALL_long <- genotypes_long %>%
+  left_join(snp_position, by = "SNP_ID") %>% 
+  filter(Group %in% c("ZMMIL", "ZMMLR", "ZMMMR","ZMPBA", "ZMPIL", "ZMPJA")) 
 
 
 
