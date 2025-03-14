@@ -53,8 +53,8 @@ joint_snp_teosinte <- snp_position %>%
 maize_chromosome_increase <- function(chr) {
   joint_snp_maize %>%
     filter(Chromosome == chr) %>%
-    mutate(Position = suppressWarnings(as.numeric(Position))) %>%  # Convert Position to numeric
-    arrange(is.na(Position), Position) %>%  # Sort in ascending order, keeping NA at the bottom
+    mutate(Position = suppressWarnings(as.numeric(Position))) %>%  
+    arrange(is.na(Position), Position) %>%  
     write_tsv(paste0("maize_data/maize_chrom", chr, "_increase.txt"))
 }
 
@@ -64,9 +64,9 @@ lapply(1:10, maize_chromosome_increase)
 maize_chromosome_decrease <- function(chr) {
   joint_snp_maize %>%
     filter(Chromosome == chr) %>%
-    mutate(Position = suppressWarnings(as.numeric(Position))) %>%  # Convert Position to numeric
-    arrange(is.na(Position), desc(Position)) %>%  # Sort numerically in descending order, move NA last
-    mutate(across(4:ncol(.), ~ ifelse(. == "?/?", "-/-", .))) %>%  # Replace "?/?" with "-/-" from 4th column onwards
+    mutate(Position = suppressWarnings(as.numeric(Position))) %>%  
+    arrange(is.na(Position), desc(Position)) %>%  
+    mutate(across(4:ncol(.), ~ ifelse(. == "?/?", "-/-", .))) %>%  
     write_tsv(paste0("maize_data/maize_chrom", chr, "_decrease.txt"))
 }
 
@@ -77,8 +77,8 @@ lapply(1:10, maize_chromosome_decrease)
 teosinte_chromosome_increase <- function(chr) {
   joint_snp_teosinte %>%
     filter(Chromosome == chr) %>%
-    mutate(Position = suppressWarnings(as.numeric(Position))) %>%  # Convert Position to numeric
-    arrange(is.na(Position), Position) %>%  # Sort in ascending order, keeping NA at the bottom
+    mutate(Position = suppressWarnings(as.numeric(Position))) %>%  
+    arrange(is.na(Position), Position) %>%  
     write_tsv(paste0("teosinte_data/teosinte_chrom", chr, "_increase.txt"))
 }
 
@@ -88,9 +88,9 @@ lapply(1:10, teosinte_chromosome_increase)
 teosinte_chromosome_decrease <- function(chr) {
   joint_snp_teosinte %>%
     filter(Chromosome == chr) %>%
-    mutate(Position = suppressWarnings(as.numeric(Position))) %>%  # Convert Position to numeric
-    arrange(is.na(Position), desc(Position)) %>%  # Sort numerically in descending order, move NA last
-    mutate(across(4:ncol(.), ~ ifelse(. == "?/?", "-/-", .))) %>%  # Replace "?/?" with "-/-" from 4th column onwards
+    mutate(Position = suppressWarnings(as.numeric(Position))) %>%  
+    arrange(is.na(Position), desc(Position)) %>%  
+    mutate(across(4:ncol(.), ~ ifelse(. == "?/?", "-/-", .))) %>%  
     write_tsv(paste0("teosinte_data/teosinte_chrom", chr, "_decrease.txt"))
 }
 

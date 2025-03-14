@@ -8,6 +8,114 @@ author: Zheyuan Zhang
 ---
 ### 1. Check the enviomental frame
 ```{r}
-list.files()
+library("tidyverse")
+```
+### 2. read files
+```{r}
+raw_genotypes <- read_tsv("fang_et_al_genotypes.txt")
+raw_snp_position <- read_tsv("snp_position.txt")
 
 ```
+### 3. delete irrelevant columns
+```{r}
+genotypes <- raw_genotypes %>% select(-JG_OTU)
+snp_position <- raw_snp_position %>% select(SNP_ID, Chromosome, Position)
+```
+### 4.separate groups maize and teosinte
+```{r}
+genotypes_maize <- genotypes %>% 
+  filter(Group %in% c("ZMMIL", "ZMMLR", "ZMMMR")) 
+
+genotypes_teosinte <- genotypes %>% 
+  filter(Group %in% c("ZMPBA", "ZMPIL", "ZMPJA"))
+```
+### 5. transpose data set and adjust rows and headers
+```{r}
+genotypes_maize_t <- genotypes_maize %>%
+  t() %>%
+  as.data.frame() %>%
+  slice(-2) %>%
+  mutate(Sample_ID = rownames(.)) %>%
+  relocate(Sample_ID) %>%
+  { colnames(.) <- .[1, ]; . } %>%
+  slice(-1) %>%
+  mutate(across(everything(), as.character)) %>%
+  mutate(across(-1, as.factor))
+
+rownames(genotypes_maize_t) <- NULL
+
+genotypes_teosinte_t <- genotypes_teosinte %>%
+  t() %>%
+  as.data.frame() %>%
+  slice(-2) %>%
+  mutate(Sample_ID = rownames(.)) %>%
+  relocate(Sample_ID) %>%
+  { colnames(.) <- .[1, ]; . } %>%
+  slice(-1) %>%
+  mutate(across(everything(), as.character)) %>%
+  mutate(across(-1, as.factor))
+
+rownames(genotypes_teosinte_t) <- NULL
+
+```
+### 6.joint snp and genotypes
+```{r}
+joint_snp_maize <- snp_position %>%
+  bind_cols(genotypes_maize_t[, -1])
+
+joint_snp_teosinte <- snp_position %>% 
+  bind_cols(genotypes_teosinte_t[, -1])
+```
+### 7. Generate 40 files
+```{r}
+# maize increase file generate
+maize_chromosome_increase <- function(chr) {
+  joint_snp_maize %>%
+    filter(Chromosome == chr) %>%
+    mutate(Position = suppressWarnings(as.numeric(Position))) %>%  
+    arrange(is.na(Position), Position) %>%  
+    write_tsv(paste0("maize_data/maize_chrom", chr, "_increase.txt"))
+}
+
+lapply(1:10, maize_chromosome_increase)
+
+# maize decrease file generate
+maize_chromosome_decrease <- function(chr) {
+  joint_snp_maize %>%
+    filter(Chromosome == chr) %>%
+    mutate(Position = suppressWarnings(as.numeric(Position))) %>%  
+    arrange(is.na(Position), desc(Position)) %>%  
+    mutate(across(4:ncol(.), ~ ifelse(. == "?/?", "-/-", .))) %>%  
+    write_tsv(paste0("maize_data/maize_chrom", chr, "_decrease.txt"))
+}
+
+lapply(1:10, maize_chromosome_decrease)
+
+
+# teosinte increase file generate
+teosinte_chromosome_increase <- function(chr) {
+  joint_snp_teosinte %>%
+    filter(Chromosome == chr) %>%
+    mutate(Position = suppressWarnings(as.numeric(Position))) %>%  
+    arrange(is.na(Position), Position) %>%  
+    write_tsv(paste0("teosinte_data/teosinte_chrom", chr, "_increase.txt"))
+}
+
+lapply(1:10, teosinte_chromosome_increase)
+
+# teosinte decrease file generate
+teosinte_chromosome_decrease <- function(chr) {
+  joint_snp_teosinte %>%
+    filter(Chromosome == chr) %>%
+    mutate(Position = suppressWarnings(as.numeric(Position))) %>%  
+    arrange(is.na(Position), desc(Position)) %>%  
+    mutate(across(4:ncol(.), ~ ifelse(. == "?/?", "-/-", .))) %>%  
+    write_tsv(paste0("teosinte_data/teosinte_chrom", chr, "_decrease.txt"))
+}
+
+lapply(1:10, teosinte_chromosome_decrease)
+
+```
+
+
+
