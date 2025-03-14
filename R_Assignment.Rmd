@@ -1,11 +1,12 @@
 ---
 title: "R_Assignment"
-data: 3/14/2025
+date: 3/14/2025
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
+author: Zheyuan Zhang
 ---
-
+### 1. Check the enviomental frame
 ```{r}
 list.files()
 
