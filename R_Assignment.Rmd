@@ -2,8 +2,8 @@
 title: "R_Assignment"
 date: 3/14/2025
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 author: Zheyuan Zhang
 ---
 ## Part I
@@ -170,16 +170,23 @@ joint_snpALL_long <- joint_snpALL_long %>%
 
 #### Distribution of SNP on Chromosome
 ```{r}
-ggplot(joint_snpALL_long, aes(x = Chromosome, fill = Group)) +
+joint_snpALL_long <- joint_snpALL_long %>%
+  mutate(Group_Type = case_when(
+    Group %in% c("ZMMIL", "ZMMLR", "ZMMMR") ~ "maize",
+    Group %in% c("ZMPBA", "ZMPIL", "ZMPJA") ~ "teosinte"
+  ))
+
+ggplot(joint_snpALL_long, aes(x = Chromosome, fill = Group_Type)) +
   geom_bar(position = "dodge") +
   labs(title = "SNP Distribution Across Chromosomes",
        x = "Chromosome", y = "Number of SNPs") +
   scale_fill_manual(values = c("maize" = "#FFD700", "teosinte" = "#228B22")) +
   theme_minimal()
+
 ```
 
 #### Distribution of SNP Across Chromosome
-```{r}
+```{r, fig.width=8, fig.height=6}
 ggplot(joint_snpALL_long %>% filter(!is.na(Position)), 
        aes(x = Position / 1e6, y = Chromosome)) +
   geom_bin2d(bins = 100) +  
@@ -230,7 +237,7 @@ ggplot(genotype_summary, aes(x = reorder(Sample_ID, -Proportion, FUN = sum),
 
 ### My own visualization
 #### Genotype Distribution Across Chromosomes
-```{r}
+```{r, fig.width=8, fig.height=6}
 chromosome_genotype <- joint_snpALL_long %>%
   mutate(Genotype_Class = case_when(
     Genotype == "?/?" ~ "missing",
@@ -247,7 +254,7 @@ ggplot(chromosome_genotype, aes(x = factor(Chromosome, levels = sort(unique(Chro
   labs(title = "Genotype Type Distribution Across Chromosomes",
        x = "Chromosome", y = "Proportion", fill = "Genotype Type") +
   theme_minimal()
-
 ```
+
 
 
