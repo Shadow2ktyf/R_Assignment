@@ -6,22 +6,41 @@ output:
   pdf_document: default
 author: Zheyuan Zhang
 ---
-### 1. Check the enviomental frame
+## Part I
+
+### Data Inspection
+
+#### Check the enviomental frame
 ```{r}
 library("tidyverse")
+library(ggplot2)
 ```
-### 2. read files
+#### Read files
 ```{r}
 raw_genotypes <- read_tsv("fang_et_al_genotypes.txt")
 raw_snp_position <- read_tsv("snp_position.txt")
 
 ```
-### 3. delete irrelevant columns
+#### Inspect:
+```{r}
+head(raw_genotypes)
+head(raw_snp_position)
+
+dim(raw_genotypes)
+dim(raw_snp_position)
+
+str(raw_genotypes)
+str(raw_snp_position)
+
+```
+### Data Processing
+
+#### Delete irrelevant columns
 ```{r}
 genotypes <- raw_genotypes %>% select(-JG_OTU)
 snp_position <- raw_snp_position %>% select(SNP_ID, Chromosome, Position)
 ```
-### 4.separate groups maize and teosinte
+#### Separate groups maize and teosinte
 ```{r}
 genotypes_maize <- genotypes %>% 
   filter(Group %in% c("ZMMIL", "ZMMLR", "ZMMMR")) 
@@ -29,7 +48,7 @@ genotypes_maize <- genotypes %>%
 genotypes_teosinte <- genotypes %>% 
   filter(Group %in% c("ZMPBA", "ZMPIL", "ZMPJA"))
 ```
-### 5. transpose data set and adjust rows and headers
+#### Transpose data set and adjust rows and headers
 ```{r}
 genotypes_maize_t <- genotypes_maize %>%
   t() %>%
@@ -58,7 +77,7 @@ genotypes_teosinte_t <- genotypes_teosinte %>%
 rownames(genotypes_teosinte_t) <- NULL
 
 ```
-### 6.joint snp and genotypes
+#### Joint snp and genotypes
 ```{r}
 joint_snp_maize <- snp_position %>%
   bind_cols(genotypes_maize_t[, -1])
@@ -66,7 +85,7 @@ joint_snp_maize <- snp_position %>%
 joint_snp_teosinte <- snp_position %>% 
   bind_cols(genotypes_teosinte_t[, -1])
 ```
-### 7. Generate 40 files
+#### Generate 40 files
 ```{r}
 # maize increase file generate
 maize_chromosome_increase <- function(chr) {
@@ -122,7 +141,7 @@ teosinte_chromosome_decrease <- function(chr) {
 lapply(1:10, teosinte_chromosome_decrease)
 
 ```
-### 8.generate long file 
+#### Generate long file 
 ```{r}
 genotypes_long <- raw_genotypes %>%
   pivot_longer(cols = -c(Sample_ID, JG_OTU, Group), names_to = "SNP_ID", values_to = "Genotype")
@@ -132,5 +151,103 @@ joint_snpALL_long <- genotypes_long %>%
   filter(Group %in% c("ZMMIL", "ZMMLR", "ZMMMR","ZMPBA", "ZMPIL", "ZMPJA"))
 ```
 
+## Part II
+
+### SNPs per chromosome
+```{r}
+joint_snpALL_long <- joint_snpALL_long %>%
+  mutate(Chromosome_numeric = suppressWarnings(as.numeric(Chromosome)),  
+         Chromosome = if_else(is.na(Chromosome_numeric), Chromosome, as.character(Chromosome_numeric))) 
+
+
+joint_snpALL_long <- joint_snpALL_long %>%
+  mutate(Chromosome = factor(Chromosome, levels = c(sort(as.numeric(unique(Chromosome[!Chromosome %in% c("unknown", "multiple")]))), "unknown", "multiple")))
+
+
+joint_snpALL_long <- joint_snpALL_long %>%
+  mutate(Position = suppressWarnings(as.numeric(Position))) 
+```
+
+#### Distribution of SNP on Chromosome
+```{r}
+ggplot(joint_snpALL_long, aes(x = Chromosome, fill = Group)) +
+  geom_bar(position = "dodge") +
+  labs(title = "SNP Distribution Across Chromosomes",
+       x = "Chromosome", y = "Number of SNPs") +
+  scale_fill_manual(values = c("maize" = "#FFD700", "teosinte" = "#228B22")) +
+  theme_minimal()
+```
+
+#### Distribution of SNP Across Chromosome
+```{r}
+ggplot(joint_snpALL_long %>% filter(!is.na(Position)), 
+       aes(x = Position / 1e6, y = Chromosome)) +
+  geom_bin2d(bins = 100) +  
+  scale_fill_viridis_c() + 
+  labs(title = "SNP Density Along Chromosomes",
+       x = "Position (Mb)", y = "Chromosome", fill = "Density") +
+  theme_minimal()
+```
+
+### Missing data and amount of heterozygosity
+```{r}
+genotype_summary <- joint_snpALL_long %>%
+  mutate(Genotype_Class = case_when(
+    Genotype == "?/?" ~ "missing",
+    substr(Genotype, 1, 1) == substr(Genotype, 3, 3) ~ "homozygous",
+    TRUE ~ "heterozygous"
+  )) %>%
+  count(Sample_ID, Group, Genotype_Class) %>%
+  group_by(Sample_ID, Group) %>%
+  mutate(Proportion = n / sum(n))
+
+ggplot(genotype_summary, aes(x = reorder(Sample_ID, -Proportion, FUN = sum), 
+                             y = Proportion, fill = Genotype_Class)) +
+  geom_col(position = "stack", width = 0.8) +
+  scale_fill_manual(values = c("homozygous" = "#2E86C1", 
+                               "heterozygous" = "#28B463",  
+                               "missing" = "#E74C3C")) +
+  labs(title = "Proportion of Genotypes per Sample",
+       subtitle = "Grouped by Maize and Teosinte",
+       x = "Sample ID", y = "Proportion", fill = "Genotype Type") +
+  facet_wrap(~ Group, scales = "free_x") +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),  
+    plot.subtitle = element_text(size = 14, hjust = 0.5, color = "gray50"),  
+    axis.title = element_text(size = 14, face = "bold"),  
+    axis.text.x = element_blank(),  
+    axis.ticks.x = element_blank(),  
+    panel.grid.major.x = element_blank(),  
+    panel.grid.minor = element_blank(),  
+    legend.position = "top",  
+    legend.title = element_text(face = "bold"),  
+    legend.key.size = unit(0.8, "cm")  
+  ) +
+  guides(fill = guide_legend(title = "Genotype Class"))
+
+```
+
+### My own visualization
+#### Genotype Distribution Across Chromosomes
+```{r}
+chromosome_genotype <- joint_snpALL_long %>%
+  mutate(Genotype_Class = case_when(
+    Genotype == "?/?" ~ "missing",
+    substr(Genotype, 1, 1) == substr(Genotype, 3, 3) ~ "homozygous",
+    TRUE ~ "heterozygous"
+  )) %>%
+  group_by(Chromosome, Genotype_Class) %>%
+  summarise(Count = n(), .groups = "drop")
+
+ggplot(chromosome_genotype, aes(x = factor(Chromosome, levels = sort(unique(Chromosome))), 
+                                y = Count, fill = Genotype_Class)) +
+  geom_bar(stat = "identity", position = "fill") +  
+  scale_fill_manual(values = c("homozygous" = "#2E86C1", "heterozygous" = "#28B463", "missing" = "#E74C3C")) +
+  labs(title = "Genotype Type Distribution Across Chromosomes",
+       x = "Chromosome", y = "Proportion", fill = "Genotype Type") +
+  theme_minimal()
+
+```
 
 
