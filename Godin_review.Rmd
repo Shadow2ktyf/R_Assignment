@@ -1,0 +1,12 @@
+---
+title: "Godin_review"
+output: pdf_document
+---
+
+I was able to get your markdown file to run. My comments on the repository are as follows:
+
+- The readme file and the repository itself are very well organized, everything was easy to find.
+- The rmarkdown file was also well organized and documented. 
+- Your plots are also very well formatted. However, I think you are missing a visualization question. The assignment asks for a plot that analyzes SNP distribution across groups. You have the plot for samples with the homo, hetero, and missing data classes. However, I think you also need a plot where the x-axis is divided into groups like ZMMLR, TRIPS, etc. 
+- Your decreasing position files appear to have replaced the SNPs with numbers. If you look at the difference in output between the files, it should be clear what I mean. Having played around with the code, the problem appears to stem from this line, `mutate(across(4:ncol(.), ~ ifelse(. == "?/?", "-/-", .))) %>%`. I would take a look at its output to see why it is giving this behavior. I assume it is do to some type of datatype handling error. You may want to use `gsub` to substitute the ? for -. 
+- I'm not sure why you included the `testing.R` file in the repo. This looks like a file you could have included in the gitignore. It is not mentioned in the readme, so I think it is not needed.
