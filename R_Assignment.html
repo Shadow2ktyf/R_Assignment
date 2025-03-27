@@ -1849,10 +1849,10 @@ maize_chromosome_decrease &lt;- function(chr) {
   joint_snp_maize %&gt;%
     filter(Chromosome == chr) %&gt;%
     mutate(Numeric_Position = suppressWarnings(as.numeric(Position))) %&gt;%  
-    arrange(is.na(Numeric_Position), desc(Numeric_Position)) %&gt;%  
+    arrange(is.na(Numeric_Position), desc(Numeric_Position)) %&gt;%
     select(-Numeric_Position) %&gt;%
-    mutate(across(4:ncol(.), ~ ifelse(. == &quot;?/?&quot;, &quot;-/-&quot;, .))) %&gt;% 
-    mutate(across(4:ncol(.), as.character)) %&gt;%
+    mutate(across(4:ncol(.), as.character)) %&gt;%  # 确保全部是字符型
+    mutate(across(4:ncol(.), ~ replace(., . == &quot;?/?&quot;, &quot;-/-&quot;))) %&gt;%  # 安全替换，不影响其他值
     write_tsv(paste0(&quot;maize_data/maize_chrom&quot;, chr, &quot;_decrease.txt&quot;))
 }
 
@@ -1861,16 +1861,16 @@ lapply(1:10, maize_chromosome_decrease)</code></pre>
 ## # A tibble: 155 × 1,576
 ##    SNP_ID  Chromosome Position ZDP_0752a ZDP_0793a ZDP_0612a ZDP_0602a ZDP_0581a
 ##    &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    
-##  1 PZA002… 1          2984129… 9         9         -/-       6         6        
-##  2 PZA004… 1          2980826… 9         9         9         4         4        
-##  3 PZA004… 1          2980825… 6         6         6         6         6        
-##  4 PZA004… 1          2980825… 9         9         9         9         9        
-##  5 PZA004… 1          2980824… 11        11        11        11        11       
-##  6 PZA002… 1          2957711… 2         2         2         2         2        
-##  7 PZA000… 1          2954595… 2         2         4         2         2        
-##  8 PZA006… 1          2936327… 7         -/-       9         9         9        
-##  9 PZA002… 1          2927289… 9         9         9         4         4        
-## 10 PZA002… 1          2927288… 10        9         9         10        11       
+##  1 PZA002… 1          2984129… G/G       G/G       -/-       C/C       C/C      
+##  2 PZA004… 1          2980826… G/G       G/G       G/G       A/G       A/G      
+##  3 PZA004… 1          2980825… C/C       C/C       C/C       C/C       C/C      
+##  4 PZA004… 1          2980825… G/G       G/G       G/G       G/G       G/G      
+##  5 PZA004… 1          2980824… T/T       T/T       T/T       T/T       T/T      
+##  6 PZA002… 1          2957711… A/A       A/A       A/A       A/A       A/A      
+##  7 PZA000… 1          2954595… A/A       A/A       A/G       A/A       A/A      
+##  8 PZA006… 1          2936327… C/G       -/-       G/G       G/G       G/G      
+##  9 PZA002… 1          2927289… G/G       G/G       G/G       A/G       A/G      
+## 10 PZA002… 1          2927288… G/T       G/G       G/G       G/T       T/T      
 ## # ℹ 145 more rows
 ## # ℹ 1,568 more variables: ZDP_0552a &lt;chr&gt;, ZDP_0543a &lt;chr&gt;, ZDP_0042a &lt;chr&gt;,
 ## #   ZDP_0121a &lt;chr&gt;, ZDP_0101b &lt;chr&gt;, ZDP_0087a &lt;chr&gt;, ZDP_0033a &lt;chr&gt;,
@@ -1883,16 +1883,16 @@ lapply(1:10, maize_chromosome_decrease)</code></pre>
 ## # A tibble: 127 × 1,576
 ##    SNP_ID  Chromosome Position ZDP_0752a ZDP_0793a ZDP_0612a ZDP_0602a ZDP_0581a
 ##    &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    
-##  1 PZD000… 2          2331291… 6         6         6         6         8        
-##  2 PZD000… 2          2331290… 11        11        6         6         6        
-##  3 zap1.2  2          2331285… 4         2         2         4         9        
-##  4 PZD000… 2          2331285… 6         6         11        8         6        
-##  5 PZA006… 2          2289910… 9         9         9         9         9        
-##  6 PZA006… 2          2289910… 4         2         2         4         2        
-##  7 PZA004… 2          2221352… 9         9         9         4         2        
-##  8 PZA004… 2          2221349… 4         9         4         2         2        
-##  9 PZA004… 2          2221349… 6         9         6         7         9        
-## 10 PZA001… 2          2202647… 6         6         3         3         6        
+##  1 PZD000… 2          2331291… C/C       C/C       C/C       C/C       C/T      
+##  2 PZD000… 2          2331290… T/T       T/T       C/C       C/C       C/C      
+##  3 zap1.2  2          2331285… A/G       A/A       A/A       A/G       G/G      
+##  4 PZD000… 2          2331285… C/C       C/C       T/T       C/T       C/C      
+##  5 PZA006… 2          2289910… G/G       G/G       G/G       G/G       G/G      
+##  6 PZA006… 2          2289910… A/G       A/A       A/A       A/G       A/A      
+##  7 PZA004… 2          2221352… G/G       G/G       G/G       A/G       A/A      
+##  8 PZA004… 2          2221349… A/G       G/G       A/G       A/A       A/A      
+##  9 PZA004… 2          2221349… C/C       G/G       C/C       C/G       G/G      
+## 10 PZA001… 2          2202647… C/C       C/C       A/C       A/C       C/C      
 ## # ℹ 117 more rows
 ## # ℹ 1,568 more variables: ZDP_0552a &lt;chr&gt;, ZDP_0543a &lt;chr&gt;, ZDP_0042a &lt;chr&gt;,
 ## #   ZDP_0121a &lt;chr&gt;, ZDP_0101b &lt;chr&gt;, ZDP_0087a &lt;chr&gt;, ZDP_0033a &lt;chr&gt;,
@@ -1905,16 +1905,16 @@ lapply(1:10, maize_chromosome_decrease)</code></pre>
 ## # A tibble: 107 × 1,576
 ##    SNP_ID  Chromosome Position ZDP_0752a ZDP_0793a ZDP_0612a ZDP_0602a ZDP_0581a
 ##    &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    
-##  1 PZA000… 3          2286142… 9         6         9         9         9        
-##  2 PZA004… 3          2268722… 8         6         6         6         6        
-##  3 PZA027… 3          2221146… 3         6         6         6         2        
-##  4 PZA027… 3          2221145… 10        9         9         9         9        
-##  5 PZA002… 3          2217306… 6         2         3         6         2        
-##  6 PZA002… 3          2193090… 8         8         6         11        6        
-##  7 PZA028… 3          2173296… 9         4         9         4         9        
-##  8 PZA028… 3          2173296… 6         6         6         -/-       6        
-##  9 sh2.9   3          2148411… 2         2         2         2         2        
-## 10 sh2.5   3          2148410… 11        11        11        11        8        
+##  1 PZA000… 3          2286142… G/G       C/C       G/G       G/G       G/G      
+##  2 PZA004… 3          2268722… C/T       C/C       C/C       C/C       C/C      
+##  3 PZA027… 3          2221146… A/C       C/C       C/C       C/C       A/A      
+##  4 PZA027… 3          2221145… G/T       G/G       G/G       G/G       G/G      
+##  5 PZA002… 3          2217306… C/C       A/A       A/C       C/C       A/A      
+##  6 PZA002… 3          2193090… C/T       C/T       C/C       T/T       C/C      
+##  7 PZA028… 3          2173296… G/G       A/G       G/G       A/G       G/G      
+##  8 PZA028… 3          2173296… C/C       C/C       C/C       -/-       C/C      
+##  9 sh2.9   3          2148411… A/A       A/A       A/A       A/A       A/A      
+## 10 sh2.5   3          2148410… T/T       T/T       T/T       T/T       C/T      
 ## # ℹ 97 more rows
 ## # ℹ 1,568 more variables: ZDP_0552a &lt;chr&gt;, ZDP_0543a &lt;chr&gt;, ZDP_0042a &lt;chr&gt;,
 ## #   ZDP_0121a &lt;chr&gt;, ZDP_0101b &lt;chr&gt;, ZDP_0087a &lt;chr&gt;, ZDP_0033a &lt;chr&gt;,
@@ -1927,16 +1927,16 @@ lapply(1:10, maize_chromosome_decrease)</code></pre>
 ## # A tibble: 91 × 1,576
 ##    SNP_ID  Chromosome Position ZDP_0752a ZDP_0793a ZDP_0612a ZDP_0602a ZDP_0581a
 ##    &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    
-##  1 PZA000… 4          2450516… 2         2         9         4         4        
-##  2 PZA006… 4          2449928… 9         6         -/-       -/-       7        
-##  3 PZA030… 4          2432228… 8         6         6         6         6        
-##  4 PZA030… 4          2432228… 8         11        6         11        8        
-##  5 PZA000… 4          2430034… 6         -/-       11        8         6        
-##  6 PZA000… 4          2430033… 11        10        9         10        11       
-##  7 PZA005… 4          2407691… 9         -/-       2         4         9        
-##  8 PZA006… 4          2268846… 9         9         4         4         4        
-##  9 PZA028… 4          2208578… 4         9         9         9         9        
-## 10 PZA030… 4          2153934… 7         6         9         9         9        
+##  1 PZA000… 4          2450516… A/A       A/A       G/G       A/G       A/G      
+##  2 PZA006… 4          2449928… G/G       C/C       -/-       -/-       C/G      
+##  3 PZA030… 4          2432228… C/T       C/C       C/C       C/C       C/C      
+##  4 PZA030… 4          2432228… C/T       T/T       C/C       T/T       C/T      
+##  5 PZA000… 4          2430034… C/C       -/-       T/T       C/T       C/C      
+##  6 PZA000… 4          2430033… T/T       G/T       G/G       G/T       T/T      
+##  7 PZA005… 4          2407691… G/G       -/-       A/A       A/G       G/G      
+##  8 PZA006… 4          2268846… G/G       G/G       A/G       A/G       A/G      
+##  9 PZA028… 4          2208578… A/G       G/G       G/G       G/G       G/G      
+## 10 PZA030… 4          2153934… C/G       C/C       G/G       G/G       G/G      
 ## # ℹ 81 more rows
 ## # ℹ 1,568 more variables: ZDP_0552a &lt;chr&gt;, ZDP_0543a &lt;chr&gt;, ZDP_0042a &lt;chr&gt;,
 ## #   ZDP_0121a &lt;chr&gt;, ZDP_0101b &lt;chr&gt;, ZDP_0087a &lt;chr&gt;, ZDP_0033a &lt;chr&gt;,
@@ -1949,16 +1949,16 @@ lapply(1:10, maize_chromosome_decrease)</code></pre>
 ## # A tibble: 122 × 1,576
 ##    SNP_ID  Chromosome Position ZDP_0752a ZDP_0793a ZDP_0612a ZDP_0602a ZDP_0581a
 ##    &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    
-##  1 PZA004… 5          2144428… 5         2         5         5         5        
-##  2 PZA000… 5          2144249… 6         6         6         6         6        
-##  3 PZA004… 5          2132715… 9         9         -/-       -/-       2        
-##  4 PZA033… 5          2108908… 11        11        11        11        11       
-##  5 PZA033… 5          2108907… 8         11        11        11        11       
-##  6 PZA005… 5          2066650… 9         9         9         9         9        
-##  7 PZA005… 5          2066649… 6         6         6         6         6        
-##  8 PZA005… 5          2066647… 6         6         6         8         6        
-##  9 PZA003… 5          2028472… 8         8         -/-       8         8        
-## 10 PZA003… 5          2028471… 3         3         2         3         3        
+##  1 PZA004… 5          2144428… A/T       A/A       A/T       A/T       A/T      
+##  2 PZA000… 5          2144249… C/C       C/C       C/C       C/C       C/C      
+##  3 PZA004… 5          2132715… G/G       G/G       -/-       -/-       A/A      
+##  4 PZA033… 5          2108908… T/T       T/T       T/T       T/T       T/T      
+##  5 PZA033… 5          2108907… C/T       T/T       T/T       T/T       T/T      
+##  6 PZA005… 5          2066650… G/G       G/G       G/G       G/G       G/G      
+##  7 PZA005… 5          2066649… C/C       C/C       C/C       C/C       C/C      
+##  8 PZA005… 5          2066647… C/C       C/C       C/C       C/T       C/C      
+##  9 PZA003… 5          2028472… C/T       C/T       -/-       C/T       C/T      
+## 10 PZA003… 5          2028471… A/C       A/C       A/A       A/C       A/C      
 ## # ℹ 112 more rows
 ## # ℹ 1,568 more variables: ZDP_0552a &lt;chr&gt;, ZDP_0543a &lt;chr&gt;, ZDP_0042a &lt;chr&gt;,
 ## #   ZDP_0121a &lt;chr&gt;, ZDP_0101b &lt;chr&gt;, ZDP_0087a &lt;chr&gt;, ZDP_0033a &lt;chr&gt;,
@@ -1971,16 +1971,16 @@ lapply(1:10, maize_chromosome_decrease)</code></pre>
 ## # A tibble: 76 × 1,576
 ##    SNP_ID  Chromosome Position ZDP_0752a ZDP_0793a ZDP_0612a ZDP_0602a ZDP_0581a
 ##    &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    
-##  1 PZA030… 6          1657249… 7         -/-       9         7         9        
-##  2 PZA001… 6          1644703… 6         6         6         6         8        
-##  3 PZB012… 6          1644194… 7         7         6         6         6        
-##  4 PZB012… 6          1644193… 6         8         6         6         6        
-##  5 PZA002… 6          1615701… 8         6         8         6         8        
-##  6 PZA033… 6          1598081… 2         2         2         2         2        
-##  7 PZA000… 6          1571293… 11        5         5         11        11       
-##  8 PZA000… 6          1571291… 8         -/-       8         6         6        
-##  9 PZA029… 6          1519934… 8         6         6         6         8        
-## 10 PZA002… 6          1504706… 11        11        11        11        11       
+##  1 PZA030… 6          1657249… C/G       -/-       G/G       C/G       G/G      
+##  2 PZA001… 6          1644703… C/C       C/C       C/C       C/C       C/T      
+##  3 PZB012… 6          1644194… C/G       C/G       C/C       C/C       C/C      
+##  4 PZB012… 6          1644193… C/C       C/T       C/C       C/C       C/C      
+##  5 PZA002… 6          1615701… C/T       C/C       C/T       C/C       C/T      
+##  6 PZA033… 6          1598081… A/A       A/A       A/A       A/A       A/A      
+##  7 PZA000… 6          1571293… T/T       A/T       A/T       T/T       T/T      
+##  8 PZA000… 6          1571291… C/T       -/-       C/T       C/C       C/C      
+##  9 PZA029… 6          1519934… C/T       C/C       C/C       C/C       C/T      
+## 10 PZA002… 6          1504706… T/T       T/T       T/T       T/T       T/T      
 ## # ℹ 66 more rows
 ## # ℹ 1,568 more variables: ZDP_0552a &lt;chr&gt;, ZDP_0543a &lt;chr&gt;, ZDP_0042a &lt;chr&gt;,
 ## #   ZDP_0121a &lt;chr&gt;, ZDP_0101b &lt;chr&gt;, ZDP_0087a &lt;chr&gt;, ZDP_0033a &lt;chr&gt;,
@@ -1993,16 +1993,16 @@ lapply(1:10, maize_chromosome_decrease)</code></pre>
 ## # A tibble: 97 × 1,576
 ##    SNP_ID  Chromosome Position ZDP_0752a ZDP_0793a ZDP_0612a ZDP_0602a ZDP_0581a
 ##    &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    
-##  1 PZA028… 7          1690679… 2         2         2         2         2        
-##  2 PZA028… 7          1690677… 9         9         7         7         9        
-##  3 PZA004… 7          1690175… 11        11        8         8         8        
-##  4 PZA000… 7          1672182… 6         11        11        11        11       
-##  5 PZA004… 7          1670607… 6         6         6         6         6        
-##  6 PZA004… 7          1670606… 6         6         6         6         6        
-##  7 PZA032… 7          1670148… 6         6         6         6         6        
-##  8 PZB006… 7          1659948… 6         6         7         7         6        
-##  9 PZB006… 7          1659948… 6         6         7         6         6        
-## 10 PZB006… 7          1659948… 4         2         2         2         2        
+##  1 PZA028… 7          1690679… A/A       A/A       A/A       A/A       A/A      
+##  2 PZA028… 7          1690677… G/G       G/G       C/G       C/G       G/G      
+##  3 PZA004… 7          1690175… T/T       T/T       C/T       C/T       C/T      
+##  4 PZA000… 7          1672182… C/C       T/T       T/T       T/T       T/T      
+##  5 PZA004… 7          1670607… C/C       C/C       C/C       C/C       C/C      
+##  6 PZA004… 7          1670606… C/C       C/C       C/C       C/C       C/C      
+##  7 PZA032… 7          1670148… C/C       C/C       C/C       C/C       C/C      
+##  8 PZB006… 7          1659948… C/C       C/C       C/G       C/G       C/C      
+##  9 PZB006… 7          1659948… C/C       C/C       C/G       C/C       C/C      
+## 10 PZB006… 7          1659948… A/G       A/A       A/A       A/A       A/A      
 ## # ℹ 87 more rows
 ## # ℹ 1,568 more variables: ZDP_0552a &lt;chr&gt;, ZDP_0543a &lt;chr&gt;, ZDP_0042a &lt;chr&gt;,
 ## #   ZDP_0121a &lt;chr&gt;, ZDP_0101b &lt;chr&gt;, ZDP_0087a &lt;chr&gt;, ZDP_0033a &lt;chr&gt;,
@@ -2015,16 +2015,16 @@ lapply(1:10, maize_chromosome_decrease)</code></pre>
 ## # A tibble: 62 × 1,576
 ##    SNP_ID  Chromosome Position ZDP_0752a ZDP_0793a ZDP_0612a ZDP_0602a ZDP_0581a
 ##    &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    
-##  1 PZA002… 8          1669800… 2         4         2         2         2        
-##  2 PZA002… 8          1669799… 11        11        8         8         11       
-##  3 PZA006… 8          1661827… 2         2         2         2         2        
-##  4 PZA006… 8          1661827… 9         9         9         9         9        
-##  5 PZA005… 8          1635723… 2         9         -/-       -/-       2        
-##  6 PZA004… 8          1635654… 6         6         11        6         6        
-##  7 PZA004… 8          1635654… 6         8         6         8         8        
-##  8 PZA004… 8          1635653… 6         6         -/-       6         8        
-##  9 PZA007… 8          1598979… 8         11        11        11        11       
-## 10 PZB001… 8          1574730… 8         11        11        11        11       
+##  1 PZA002… 8          1669800… A/A       A/G       A/A       A/A       A/A      
+##  2 PZA002… 8          1669799… T/T       T/T       C/T       C/T       T/T      
+##  3 PZA006… 8          1661827… A/A       A/A       A/A       A/A       A/A      
+##  4 PZA006… 8          1661827… G/G       G/G       G/G       G/G       G/G      
+##  5 PZA005… 8          1635723… A/A       G/G       -/-       -/-       A/A      
+##  6 PZA004… 8          1635654… C/C       C/C       T/T       C/C       C/C      
+##  7 PZA004… 8          1635654… C/C       C/T       C/C       C/T       C/T      
+##  8 PZA004… 8          1635653… C/C       C/C       -/-       C/C       C/T      
+##  9 PZA007… 8          1598979… C/T       T/T       T/T       T/T       T/T      
+## 10 PZB001… 8          1574730… C/T       T/T       T/T       T/T       T/T      
 ## # ℹ 52 more rows
 ## # ℹ 1,568 more variables: ZDP_0552a &lt;chr&gt;, ZDP_0543a &lt;chr&gt;, ZDP_0042a &lt;chr&gt;,
 ## #   ZDP_0121a &lt;chr&gt;, ZDP_0101b &lt;chr&gt;, ZDP_0087a &lt;chr&gt;, ZDP_0033a &lt;chr&gt;,
@@ -2037,16 +2037,16 @@ lapply(1:10, maize_chromosome_decrease)</code></pre>
 ## # A tibble: 60 × 1,576
 ##    SNP_ID  Chromosome Position ZDP_0752a ZDP_0793a ZDP_0612a ZDP_0602a ZDP_0581a
 ##    &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    
-##  1 PZA001… 9          1512899… 7         9         -/-       -/-       -/-      
-##  2 PZA001… 9          1512898… 9         9         9         4         9        
-##  3 PZA001… 9          1493987… 6         6         6         6         6        
-##  4 PZA005… 9          1473849… 9         9         9         9         9        
-##  5 PZA029… 9          1464706… 6         6         6         6         6        
-##  6 PZA029… 9          1464705… 2         2         2         2         2        
-##  7 PZA003… 9          1425000… 6         6         6         6         6        
-##  8 PZA003… 9          1424998… 11        11        8         8         11       
-##  9 PZB002… 9          1422714… 11        11        11        11        11       
-## 10 PZB002… 9          1422710… 2         2         2         4         2        
+##  1 PZA001… 9          1512899… C/G       G/G       -/-       -/-       -/-      
+##  2 PZA001… 9          1512898… G/G       G/G       G/G       A/G       G/G      
+##  3 PZA001… 9          1493987… C/C       C/C       C/C       C/C       C/C      
+##  4 PZA005… 9          1473849… G/G       G/G       G/G       G/G       G/G      
+##  5 PZA029… 9          1464706… C/C       C/C       C/C       C/C       C/C      
+##  6 PZA029… 9          1464705… A/A       A/A       A/A       A/A       A/A      
+##  7 PZA003… 9          1425000… C/C       C/C       C/C       C/C       C/C      
+##  8 PZA003… 9          1424998… T/T       T/T       C/T       C/T       T/T      
+##  9 PZB002… 9          1422714… T/T       T/T       T/T       T/T       T/T      
+## 10 PZB002… 9          1422710… A/A       A/A       A/A       A/G       A/A      
 ## # ℹ 50 more rows
 ## # ℹ 1,568 more variables: ZDP_0552a &lt;chr&gt;, ZDP_0543a &lt;chr&gt;, ZDP_0042a &lt;chr&gt;,
 ## #   ZDP_0121a &lt;chr&gt;, ZDP_0101b &lt;chr&gt;, ZDP_0087a &lt;chr&gt;, ZDP_0033a &lt;chr&gt;,
@@ -2059,16 +2059,16 @@ lapply(1:10, maize_chromosome_decrease)</code></pre>
 ## # A tibble: 53 × 1,576
 ##    SNP_ID  Chromosome Position ZDP_0752a ZDP_0793a ZDP_0612a ZDP_0602a ZDP_0581a
 ##    &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    
-##  1 PZD000… 10         1465994… 6         6         6         6         6        
-##  2 PZD000… 10         1465991… 7         6         7         7         9        
-##  3 PZA029… 10         1436761… 6         -/-       6         6         6        
-##  4 PZA007… 10         1428547… 2         4         9         2         -/-      
-##  5 PZA007… 10         1428546… 6         8         6         6         6        
-##  6 PZB000… 10         1404931… 6         6         7         6         7        
-##  7 PZB011… 10         1340348… 11        11        11        11        11       
-##  8 PZB011… 10         1340346… 9         4         9         9         9        
-##  9 PZB011… 10         1340344… 2         6         6         6         6        
-## 10 PZA003… 10         1301707… 9         9         9         9         9        
+##  1 PZD000… 10         1465994… C/C       C/C       C/C       C/C       C/C      
+##  2 PZD000… 10         1465991… C/G       C/C       C/G       C/G       G/G      
+##  3 PZA029… 10         1436761… C/C       -/-       C/C       C/C       C/C      
+##  4 PZA007… 10         1428547… A/A       A/G       G/G       A/A       -/-      
+##  5 PZA007… 10         1428546… C/C       C/T       C/C       C/C       C/C      
+##  6 PZB000… 10         1404931… C/C       C/C       C/G       C/C       C/G      
+##  7 PZB011… 10         1340348… T/T       T/T       T/T       T/T       T/T      
+##  8 PZB011… 10         1340346… G/G       A/G       G/G       G/G       G/G      
+##  9 PZB011… 10         1340344… A/A       C/C       C/C       C/C       C/C      
+## 10 PZA003… 10         1301707… G/G       G/G       G/G       G/G       G/G      
 ## # ℹ 43 more rows
 ## # ℹ 1,568 more variables: ZDP_0552a &lt;chr&gt;, ZDP_0543a &lt;chr&gt;, ZDP_0042a &lt;chr&gt;,
 ## #   ZDP_0121a &lt;chr&gt;, ZDP_0101b &lt;chr&gt;, ZDP_0087a &lt;chr&gt;, ZDP_0033a &lt;chr&gt;,
@@ -2310,11 +2310,11 @@ lapply(1:10, teosinte_chromosome_increase)</code></pre>
 teosinte_chromosome_decrease &lt;- function(chr) {
   joint_snp_teosinte %&gt;%
     filter(Chromosome == chr) %&gt;%
-    mutate(Numeric_Position = suppressWarnings(as.numeric(Position))) %&gt;%  
-    arrange(is.na(Numeric_Position), desc(Numeric_Position)) %&gt;%  
+    mutate(Numeric_Position = suppressWarnings(as.numeric(Position))) %&gt;% 
+    arrange(is.na(Numeric_Position), desc(Numeric_Position)) %&gt;% 
     select(-Numeric_Position) %&gt;%  
-    mutate(across(4:ncol(.), ~ ifelse(. == &quot;?/?&quot;, &quot;-/-&quot;, .))) %&gt;%  
     mutate(across(4:ncol(.), as.character)) %&gt;%
+    mutate(across(4:ncol(.), ~ replace(., . == &quot;?/?&quot;, &quot;-/-&quot;))) %&gt;%  
     write_tsv(paste0(&quot;teosinte_data/teosinte_chrom&quot;, chr, &quot;_decrease.txt&quot;))
 }
 
@@ -2323,16 +2323,16 @@ lapply(1:10, teosinte_chromosome_decrease)</code></pre>
 ## # A tibble: 155 × 978
 ##    SNP_ID    Chromosome Position S0881 S1057 S1087 S1689 S1697 S1698 S1703 S1704
 ##    &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 PZA00230… 1          2984129… -/-   7     9     9     7     9     9     9    
-##  2 PZA00477… 1          2980826… 9     9     9     9     9     9     9     9    
-##  3 PZA00477… 1          2980825… 8     6     8     8     11    8     8     6    
-##  4 PZA00477… 1          2980825… 9     7     9     9     9     9     9     9    
-##  5 PZA00477… 1          2980824… 10    11    11    10    -/-   10    11    11   
-##  6 PZA00243… 1          2957711… 2     2     2     2     4     2     2     2    
-##  7 PZA00050… 1          2954595… 2     2     2     2     2     2     2     2    
-##  8 PZA00623… 1          2936327… 9     9     -/-   9     6     9     9     6    
-##  9 PZA00235… 1          2927289… 4     9     9     4     4     9     -/-   9    
-## 10 PZA00235… 1          2927288… 10    10    9     10    10    -/-   11    11   
+##  1 PZA00230… 1          2984129… -/-   C/G   G/G   G/G   C/G   G/G   G/G   G/G  
+##  2 PZA00477… 1          2980826… G/G   G/G   G/G   G/G   G/G   G/G   G/G   G/G  
+##  3 PZA00477… 1          2980825… C/T   C/C   C/T   C/T   T/T   C/T   C/T   C/C  
+##  4 PZA00477… 1          2980825… G/G   C/G   G/G   G/G   G/G   G/G   G/G   G/G  
+##  5 PZA00477… 1          2980824… G/T   T/T   T/T   G/T   -/-   G/T   T/T   T/T  
+##  6 PZA00243… 1          2957711… A/A   A/A   A/A   A/A   A/G   A/A   A/A   A/A  
+##  7 PZA00050… 1          2954595… A/A   A/A   A/A   A/A   A/A   A/A   A/A   A/A  
+##  8 PZA00623… 1          2936327… G/G   G/G   -/-   G/G   C/C   G/G   G/G   C/C  
+##  9 PZA00235… 1          2927289… A/G   G/G   G/G   A/G   A/G   G/G   -/-   G/G  
+## 10 PZA00235… 1          2927288… G/T   G/T   G/G   G/T   G/T   -/-   T/T   T/T  
 ## # ℹ 145 more rows
 ## # ℹ 967 more variables: TA057 &lt;chr&gt;, TA137 &lt;chr&gt;, TA153 &lt;chr&gt;, TA205 &lt;chr&gt;,
 ## #   TA217 &lt;chr&gt;, TA242 &lt;chr&gt;, TA285 &lt;chr&gt;, TA293 &lt;chr&gt;, TAMex0091.1 &lt;chr&gt;,
@@ -2345,16 +2345,16 @@ lapply(1:10, teosinte_chromosome_decrease)</code></pre>
 ## # A tibble: 127 × 978
 ##    SNP_ID    Chromosome Position S0881 S1057 S1087 S1689 S1697 S1698 S1703 S1704
 ##    &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 PZD00022… 2          2331291… 6     6     6     6     6     -/-   8     8    
-##  2 PZD00022… 2          2331290… 11    8     11    11    11    11    8     8    
-##  3 zap1.2    2          2331285… 2     4     4     2     -/-   4     9     4    
-##  4 PZD00022… 2          2331285… 11    6     8     8     6     6     6     8    
-##  5 PZA00672… 2          2289910… -/-   9     -/-   9     9     -/-   9     9    
-##  6 PZA00672… 2          2289910… 4     9     9     2     9     9     4     9    
-##  7 PZA00487… 2          2221352… 9     -/-   9     4     2     9     9     2    
-##  8 PZA00487… 2          2221349… 4     2     2     4     2     2     2     4    
-##  9 PZA00487… 2          2221349… 6     6     6     6     6     6     6     7    
-## 10 PZA00163… 2          2202647… 6     -/-   -/-   3     3     6     6     6    
+##  1 PZD00022… 2          2331291… C/C   C/C   C/C   C/C   C/C   -/-   C/T   C/T  
+##  2 PZD00022… 2          2331290… T/T   C/T   T/T   T/T   T/T   T/T   C/T   C/T  
+##  3 zap1.2    2          2331285… A/A   A/G   A/G   A/A   -/-   A/G   G/G   A/G  
+##  4 PZD00022… 2          2331285… T/T   C/C   C/T   C/T   C/C   C/C   C/C   C/T  
+##  5 PZA00672… 2          2289910… -/-   G/G   -/-   G/G   G/G   -/-   G/G   G/G  
+##  6 PZA00672… 2          2289910… A/G   G/G   G/G   A/A   G/G   G/G   A/G   G/G  
+##  7 PZA00487… 2          2221352… G/G   -/-   G/G   A/G   A/A   G/G   G/G   A/A  
+##  8 PZA00487… 2          2221349… A/G   A/A   A/A   A/G   A/A   A/A   A/A   A/G  
+##  9 PZA00487… 2          2221349… C/C   C/C   C/C   C/C   C/C   C/C   C/C   C/G  
+## 10 PZA00163… 2          2202647… C/C   -/-   -/-   A/C   A/C   C/C   C/C   C/C  
 ## # ℹ 117 more rows
 ## # ℹ 967 more variables: TA057 &lt;chr&gt;, TA137 &lt;chr&gt;, TA153 &lt;chr&gt;, TA205 &lt;chr&gt;,
 ## #   TA217 &lt;chr&gt;, TA242 &lt;chr&gt;, TA285 &lt;chr&gt;, TA293 &lt;chr&gt;, TAMex0091.1 &lt;chr&gt;,
@@ -2367,16 +2367,16 @@ lapply(1:10, teosinte_chromosome_decrease)</code></pre>
 ## # A tibble: 107 × 978
 ##    SNP_ID    Chromosome Position S0881 S1057 S1087 S1689 S1697 S1698 S1703 S1704
 ##    &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 PZA00088… 3          2286142… 7     6     7     6     7     7     -/-   7    
-##  2 PZA00420… 3          2268722… 8     6     6     6     8     6     8     6    
-##  3 PZA02789… 3          2221146… 6     6     2     6     6     6     6     6    
-##  4 PZA02789… 3          2221145… 10    9     9     9     10    9     9     9    
-##  5 PZA00234… 3          2217306… 6     6     2     6     6     6     6     3    
-##  6 PZA00219… 3          2193090… -/-   6     -/-   6     11    6     8     11   
-##  7 PZA02824… 3          2173296… -/-   4     2     -/-   4     9     4     2    
-##  8 PZA02824… 3          2173296… 6     6     11    6     6     6     6     6    
-##  9 sh2.9     3          2148411… 2     2     2     2     2     2     2     2    
-## 10 sh2.5     3          2148410… 11    11    11    8     11    11    11    11   
+##  1 PZA00088… 3          2286142… C/G   C/C   C/G   C/C   C/G   C/G   -/-   C/G  
+##  2 PZA00420… 3          2268722… C/T   C/C   C/C   C/C   C/T   C/C   C/T   C/C  
+##  3 PZA02789… 3          2221146… C/C   C/C   A/A   C/C   C/C   C/C   C/C   C/C  
+##  4 PZA02789… 3          2221145… G/T   G/G   G/G   G/G   G/T   G/G   G/G   G/G  
+##  5 PZA00234… 3          2217306… C/C   C/C   A/A   C/C   C/C   C/C   C/C   A/C  
+##  6 PZA00219… 3          2193090… -/-   C/C   -/-   C/C   T/T   C/C   C/T   T/T  
+##  7 PZA02824… 3          2173296… -/-   A/G   A/A   -/-   A/G   G/G   A/G   A/A  
+##  8 PZA02824… 3          2173296… C/C   C/C   T/T   C/C   C/C   C/C   C/C   C/C  
+##  9 sh2.9     3          2148411… A/A   A/A   A/A   A/A   A/A   A/A   A/A   A/A  
+## 10 sh2.5     3          2148410… T/T   T/T   T/T   C/T   T/T   T/T   T/T   T/T  
 ## # ℹ 97 more rows
 ## # ℹ 967 more variables: TA057 &lt;chr&gt;, TA137 &lt;chr&gt;, TA153 &lt;chr&gt;, TA205 &lt;chr&gt;,
 ## #   TA217 &lt;chr&gt;, TA242 &lt;chr&gt;, TA285 &lt;chr&gt;, TA293 &lt;chr&gt;, TAMex0091.1 &lt;chr&gt;,
@@ -2389,16 +2389,16 @@ lapply(1:10, teosinte_chromosome_decrease)</code></pre>
 ## # A tibble: 91 × 978
 ##    SNP_ID    Chromosome Position S0881 S1057 S1087 S1689 S1697 S1698 S1703 S1704
 ##    &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 PZA00051… 4          2450516… 9     2     2     2     4     2     2     2    
-##  2 PZA00682… 4          2449928… 9     9     6     6     -/-   9     9     6    
-##  3 PZA03017… 4          2432228… 6     8     11    6     6     6     6     11   
-##  4 PZA03017… 4          2432228… 6     6     6     11    11    11    11    6    
-##  5 PZA00005… 4          2430034… 8     11    11    -/-   8     8     6     6    
-##  6 PZA00005… 4          2430033… 10    9     9     10    10    10    11    11   
-##  7 PZA00529… 4          2407691… 4     4     9     9     9     4     9     4    
-##  8 PZA00636… 4          2268846… 4     4     2     4     9     9     2     9    
-##  9 PZA02865… 4          2208578… 4     2     4     2     4     2     2     2    
-## 10 PZA03081… 4          2153934… 7     7     6     7     9     9     6     7    
+##  1 PZA00051… 4          2450516… G/G   A/A   A/A   A/A   A/G   A/A   A/A   A/A  
+##  2 PZA00682… 4          2449928… G/G   G/G   C/C   C/C   -/-   G/G   G/G   C/C  
+##  3 PZA03017… 4          2432228… C/C   C/T   T/T   C/C   C/C   C/C   C/C   T/T  
+##  4 PZA03017… 4          2432228… C/C   C/C   C/C   T/T   T/T   T/T   T/T   C/C  
+##  5 PZA00005… 4          2430034… C/T   T/T   T/T   -/-   C/T   C/T   C/C   C/C  
+##  6 PZA00005… 4          2430033… G/T   G/G   G/G   G/T   G/T   G/T   T/T   T/T  
+##  7 PZA00529… 4          2407691… A/G   A/G   G/G   G/G   G/G   A/G   G/G   A/G  
+##  8 PZA00636… 4          2268846… A/G   A/G   A/A   A/G   G/G   G/G   A/A   G/G  
+##  9 PZA02865… 4          2208578… A/G   A/A   A/G   A/A   A/G   A/A   A/A   A/A  
+## 10 PZA03081… 4          2153934… C/G   C/G   C/C   C/G   G/G   G/G   C/C   C/G  
 ## # ℹ 81 more rows
 ## # ℹ 967 more variables: TA057 &lt;chr&gt;, TA137 &lt;chr&gt;, TA153 &lt;chr&gt;, TA205 &lt;chr&gt;,
 ## #   TA217 &lt;chr&gt;, TA242 &lt;chr&gt;, TA285 &lt;chr&gt;, TA293 &lt;chr&gt;, TAMex0091.1 &lt;chr&gt;,
@@ -2411,16 +2411,16 @@ lapply(1:10, teosinte_chromosome_decrease)</code></pre>
 ## # A tibble: 122 × 978
 ##    SNP_ID    Chromosome Position S0881 S1057 S1087 S1689 S1697 S1698 S1703 S1704
 ##    &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 PZA00408… 5          2144428… 5     5     5     2     2     2     2     2    
-##  2 PZA00069… 5          2144249… 6     6     6     8     8     -/-   6     6    
-##  3 PZA00433… 5          2132715… 9     4     2     4     -/-   4     9     9    
-##  4 PZA03335… 5          2108908… 9     9     10    9     10    10    9     11   
-##  5 PZA03335… 5          2108907… 11    11    11    11    11    8     8     -/-  
-##  6 PZA00545… 5          2066650… 9     9     10    9     10    9     9     10   
-##  7 PZA00545… 5          2066649… 6     6     8     6     8     6     6     8    
-##  8 PZA00545… 5          2066647… 6     6     6     8     6     8     6     6    
-##  9 PZA00395… 5          2028472… -/-   -/-   6     8     6     6     6     6    
-## 10 PZA00395… 5          2028471… 2     2     6     3     6     6     6     6    
+##  1 PZA00408… 5          2144428… A/T   A/T   A/T   A/A   A/A   A/A   A/A   A/A  
+##  2 PZA00069… 5          2144249… C/C   C/C   C/C   C/T   C/T   -/-   C/C   C/C  
+##  3 PZA00433… 5          2132715… G/G   A/G   A/A   A/G   -/-   A/G   G/G   G/G  
+##  4 PZA03335… 5          2108908… G/G   G/G   G/T   G/G   G/T   G/T   G/G   T/T  
+##  5 PZA03335… 5          2108907… T/T   T/T   T/T   T/T   T/T   C/T   C/T   -/-  
+##  6 PZA00545… 5          2066650… G/G   G/G   G/T   G/G   G/T   G/G   G/G   G/T  
+##  7 PZA00545… 5          2066649… C/C   C/C   C/T   C/C   C/T   C/C   C/C   C/T  
+##  8 PZA00545… 5          2066647… C/C   C/C   C/C   C/T   C/C   C/T   C/C   C/C  
+##  9 PZA00395… 5          2028472… -/-   -/-   C/C   C/T   C/C   C/C   C/C   C/C  
+## 10 PZA00395… 5          2028471… A/A   A/A   C/C   A/C   C/C   C/C   C/C   C/C  
 ## # ℹ 112 more rows
 ## # ℹ 967 more variables: TA057 &lt;chr&gt;, TA137 &lt;chr&gt;, TA153 &lt;chr&gt;, TA205 &lt;chr&gt;,
 ## #   TA217 &lt;chr&gt;, TA242 &lt;chr&gt;, TA285 &lt;chr&gt;, TA293 &lt;chr&gt;, TAMex0091.1 &lt;chr&gt;,
@@ -2433,16 +2433,16 @@ lapply(1:10, teosinte_chromosome_decrease)</code></pre>
 ## # A tibble: 76 × 978
 ##    SNP_ID    Chromosome Position S0881 S1057 S1087 S1689 S1697 S1698 S1703 S1704
 ##    &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 PZA03089… 6          1657249… 9     9     6     9     9     9     7     9    
-##  2 PZA00198… 6          1644703… 6     6     6     -/-   6     6     -/-   6    
-##  3 PZB01222… 6          1644194… 6     6     -/-   7     7     6     6     9    
-##  4 PZB01222… 6          1644193… 6     6     6     8     8     6     6     6    
-##  5 PZA00266… 6          1615701… 6     6     6     8     6     6     -/-   6    
-##  6 PZA03348… 6          1598081… 3     2     2     2     3     2     6     3    
-##  7 PZA00042… 6          1571293… 5     2     11    2     2     2     5     2    
-##  8 PZA00042… 6          1571291… 8     11    6     11    11    11    11    11   
-##  9 PZA02958… 6          1519934… 8     8     11    8     11    8     11    6    
-## 10 PZA00241… 6          1504706… 11    -/-   11    8     11    11    11    11   
+##  1 PZA03089… 6          1657249… G/G   G/G   C/C   G/G   G/G   G/G   C/G   G/G  
+##  2 PZA00198… 6          1644703… C/C   C/C   C/C   -/-   C/C   C/C   -/-   C/C  
+##  3 PZB01222… 6          1644194… C/C   C/C   -/-   C/G   C/G   C/C   C/C   G/G  
+##  4 PZB01222… 6          1644193… C/C   C/C   C/C   C/T   C/T   C/C   C/C   C/C  
+##  5 PZA00266… 6          1615701… C/C   C/C   C/C   C/T   C/C   C/C   -/-   C/C  
+##  6 PZA03348… 6          1598081… A/C   A/A   A/A   A/A   A/C   A/A   C/C   A/C  
+##  7 PZA00042… 6          1571293… A/T   A/A   T/T   A/A   A/A   A/A   A/T   A/A  
+##  8 PZA00042… 6          1571291… C/T   T/T   C/C   T/T   T/T   T/T   T/T   T/T  
+##  9 PZA02958… 6          1519934… C/T   C/T   T/T   C/T   T/T   C/T   T/T   C/C  
+## 10 PZA00241… 6          1504706… T/T   -/-   T/T   C/T   T/T   T/T   T/T   T/T  
 ## # ℹ 66 more rows
 ## # ℹ 967 more variables: TA057 &lt;chr&gt;, TA137 &lt;chr&gt;, TA153 &lt;chr&gt;, TA205 &lt;chr&gt;,
 ## #   TA217 &lt;chr&gt;, TA242 &lt;chr&gt;, TA285 &lt;chr&gt;, TA293 &lt;chr&gt;, TAMex0091.1 &lt;chr&gt;,
@@ -2455,16 +2455,16 @@ lapply(1:10, teosinte_chromosome_decrease)</code></pre>
 ## # A tibble: 97 × 978
 ##    SNP_ID    Chromosome Position S0881 S1057 S1087 S1689 S1697 S1698 S1703 S1704
 ##    &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 PZA02850… 7          1690679… 2     2     2     2     -/-   2     2     3    
-##  2 PZA02850… 7          1690677… 6     6     6     6     6     7     9     6    
-##  3 PZA00424… 7          1690175… 11    8     11    8     11    11    11    8    
-##  4 PZA00043… 7          1672182… 11    8     11    8     11    11    11    11   
-##  5 PZA00423… 7          1670607… 6     6     -/-   -/-   -/-   6     6     -/-  
-##  6 PZA00423… 7          1670606… 6     -/-   6     8     6     8     6     6    
-##  7 PZA03295… 7          1670148… 6     6     6     6     6     6     6     6    
-##  8 PZB00603… 7          1659948… 9     7     9     7     6     6     -/-   9    
-##  9 PZB00603… 7          1659948… 7     7     6     -/-   -/-   6     7     6    
-## 10 PZB00603… 7          1659948… 2     2     2     2     2     2     2     2    
+##  1 PZA02850… 7          1690679… A/A   A/A   A/A   A/A   -/-   A/A   A/A   A/C  
+##  2 PZA02850… 7          1690677… C/C   C/C   C/C   C/C   C/C   C/G   G/G   C/C  
+##  3 PZA00424… 7          1690175… T/T   C/T   T/T   C/T   T/T   T/T   T/T   C/T  
+##  4 PZA00043… 7          1672182… T/T   C/T   T/T   C/T   T/T   T/T   T/T   T/T  
+##  5 PZA00423… 7          1670607… C/C   C/C   -/-   -/-   -/-   C/C   C/C   -/-  
+##  6 PZA00423… 7          1670606… C/C   -/-   C/C   C/T   C/C   C/T   C/C   C/C  
+##  7 PZA03295… 7          1670148… C/C   C/C   C/C   C/C   C/C   C/C   C/C   C/C  
+##  8 PZB00603… 7          1659948… G/G   C/G   G/G   C/G   C/C   C/C   -/-   G/G  
+##  9 PZB00603… 7          1659948… C/G   C/G   C/C   -/-   -/-   C/C   C/G   C/C  
+## 10 PZB00603… 7          1659948… A/A   A/A   A/A   A/A   A/A   A/A   A/A   A/A  
 ## # ℹ 87 more rows
 ## # ℹ 967 more variables: TA057 &lt;chr&gt;, TA137 &lt;chr&gt;, TA153 &lt;chr&gt;, TA205 &lt;chr&gt;,
 ## #   TA217 &lt;chr&gt;, TA242 &lt;chr&gt;, TA285 &lt;chr&gt;, TA293 &lt;chr&gt;, TAMex0091.1 &lt;chr&gt;,
@@ -2477,16 +2477,16 @@ lapply(1:10, teosinte_chromosome_decrease)</code></pre>
 ## # A tibble: 62 × 978
 ##    SNP_ID    Chromosome Position S0881 S1057 S1087 S1689 S1697 S1698 S1703 S1704
 ##    &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 PZA00298… 8          1669800… 2     2     2     2     2     2     4     2    
-##  2 PZA00298… 8          1669799… 11    11    6     11    11    11    11    11   
-##  3 PZA00641… 8          1661827… 2     2     2     2     2     -/-   -/-   9    
-##  4 PZA00641… 8          1661827… 9     9     9     9     9     9     9     6    
-##  5 PZA00516… 8          1635723… 4     4     2     9     -/-   4     4     2    
-##  6 PZA00460… 8          1635654… 6     6     6     6     6     6     8     6    
-##  7 PZA00460… 8          1635654… 8     6     8     8     11    8     6     -/-  
-##  8 PZA00460… 8          1635653… -/-   8     6     8     8     8     11    6    
-##  9 PZA00706… 8          1598979… 8     6     6     8     6     8     11    6    
-## 10 PZB00160… 8          1574730… 11    8     11    11    8     11    8     8    
+##  1 PZA00298… 8          1669800… A/A   A/A   A/A   A/A   A/A   A/A   A/G   A/A  
+##  2 PZA00298… 8          1669799… T/T   T/T   C/C   T/T   T/T   T/T   T/T   T/T  
+##  3 PZA00641… 8          1661827… A/A   A/A   A/A   A/A   A/A   -/-   -/-   G/G  
+##  4 PZA00641… 8          1661827… G/G   G/G   G/G   G/G   G/G   G/G   G/G   C/C  
+##  5 PZA00516… 8          1635723… A/G   A/G   A/A   G/G   -/-   A/G   A/G   A/A  
+##  6 PZA00460… 8          1635654… C/C   C/C   C/C   C/C   C/C   C/C   C/T   C/C  
+##  7 PZA00460… 8          1635654… C/T   C/C   C/T   C/T   T/T   C/T   C/C   -/-  
+##  8 PZA00460… 8          1635653… -/-   C/T   C/C   C/T   C/T   C/T   T/T   C/C  
+##  9 PZA00706… 8          1598979… C/T   C/C   C/C   C/T   C/C   C/T   T/T   C/C  
+## 10 PZB00160… 8          1574730… T/T   C/T   T/T   T/T   C/T   T/T   C/T   C/T  
 ## # ℹ 52 more rows
 ## # ℹ 967 more variables: TA057 &lt;chr&gt;, TA137 &lt;chr&gt;, TA153 &lt;chr&gt;, TA205 &lt;chr&gt;,
 ## #   TA217 &lt;chr&gt;, TA242 &lt;chr&gt;, TA285 &lt;chr&gt;, TA293 &lt;chr&gt;, TAMex0091.1 &lt;chr&gt;,
@@ -2499,16 +2499,16 @@ lapply(1:10, teosinte_chromosome_decrease)</code></pre>
 ## # A tibble: 60 × 978
 ##    SNP_ID    Chromosome Position S0881 S1057 S1087 S1689 S1697 S1698 S1703 S1704
 ##    &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 PZA00184… 9          1512899… 9     6     9     7     6     7     6     9    
-##  2 PZA00184… 9          1512898… 9     9     9     9     9     9     9     9    
-##  3 PZA00123… 9          1493987… 6     8     6     6     6     6     6     8    
-##  4 PZA00579… 9          1473849… 9     9     9     9     9     9     7     9    
-##  5 PZA02997… 9          1464706… 6     6     6     11    6     6     6     6    
-##  6 PZA02997… 9          1464705… 2     2     2     2     2     2     2     2    
-##  7 PZA00323… 9          1425000… 6     8     6     6     6     6     6     6    
-##  8 PZA00323… 9          1424998… 11    11    11    11    11    11    11    11   
-##  9 PZB00221… 9          1422714… 11    11    11    -/-   -/-   11    11    11   
-## 10 PZB00221… 9          1422710… 2     2     2     2     2     2     4     2    
+##  1 PZA00184… 9          1512899… G/G   C/C   G/G   C/G   C/C   C/G   C/C   G/G  
+##  2 PZA00184… 9          1512898… G/G   G/G   G/G   G/G   G/G   G/G   G/G   G/G  
+##  3 PZA00123… 9          1493987… C/C   C/T   C/C   C/C   C/C   C/C   C/C   C/T  
+##  4 PZA00579… 9          1473849… G/G   G/G   G/G   G/G   G/G   G/G   C/G   G/G  
+##  5 PZA02997… 9          1464706… C/C   C/C   C/C   T/T   C/C   C/C   C/C   C/C  
+##  6 PZA02997… 9          1464705… A/A   A/A   A/A   A/A   A/A   A/A   A/A   A/A  
+##  7 PZA00323… 9          1425000… C/C   C/T   C/C   C/C   C/C   C/C   C/C   C/C  
+##  8 PZA00323… 9          1424998… T/T   T/T   T/T   T/T   T/T   T/T   T/T   T/T  
+##  9 PZB00221… 9          1422714… T/T   T/T   T/T   -/-   -/-   T/T   T/T   T/T  
+## 10 PZB00221… 9          1422710… A/A   A/A   A/A   A/A   A/A   A/A   A/G   A/A  
 ## # ℹ 50 more rows
 ## # ℹ 967 more variables: TA057 &lt;chr&gt;, TA137 &lt;chr&gt;, TA153 &lt;chr&gt;, TA205 &lt;chr&gt;,
 ## #   TA217 &lt;chr&gt;, TA242 &lt;chr&gt;, TA285 &lt;chr&gt;, TA293 &lt;chr&gt;, TAMex0091.1 &lt;chr&gt;,
@@ -2521,16 +2521,16 @@ lapply(1:10, teosinte_chromosome_decrease)</code></pre>
 ## # A tibble: 53 × 978
 ##    SNP_ID    Chromosome Position S0881 S1057 S1087 S1689 S1697 S1698 S1703 S1704
 ##    &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 PZD00075… 10         1465994… 6     6     -/-   6     -/-   6     6     6    
-##  2 PZD00075… 10         1465991… 7     7     9     6     6     7     6     9    
-##  3 PZA02969… 10         1436761… 6     6     6     6     6     8     6     6    
-##  4 PZA00727… 10         1428547… 4     2     2     2     4     9     2     2    
-##  5 PZA00727… 10         1428546… 6     6     8     8     8     6     6     6    
-##  6 PZB00055… 10         1404931… 9     7     9     7     7     7     6     6    
-##  7 PZB01111… 10         1340348… 8     11    11    11    8     8     11    8    
-##  8 PZB01111… 10         1340346… 9     -/-   9     9     9     9     9     9    
-##  9 PZB01111… 10         1340344… 6     6     6     6     6     6     6     -/-  
-## 10 PZA00342… 10         1301707… 9     9     4     4     9     4     9     9    
+##  1 PZD00075… 10         1465994… C/C   C/C   -/-   C/C   -/-   C/C   C/C   C/C  
+##  2 PZD00075… 10         1465991… C/G   C/G   G/G   C/C   C/C   C/G   C/C   G/G  
+##  3 PZA02969… 10         1436761… C/C   C/C   C/C   C/C   C/C   C/T   C/C   C/C  
+##  4 PZA00727… 10         1428547… A/G   A/A   A/A   A/A   A/G   G/G   A/A   A/A  
+##  5 PZA00727… 10         1428546… C/C   C/C   C/T   C/T   C/T   C/C   C/C   C/C  
+##  6 PZB00055… 10         1404931… G/G   C/G   G/G   C/G   C/G   C/G   C/C   C/C  
+##  7 PZB01111… 10         1340348… C/T   T/T   T/T   T/T   C/T   C/T   T/T   C/T  
+##  8 PZB01111… 10         1340346… G/G   -/-   G/G   G/G   G/G   G/G   G/G   G/G  
+##  9 PZB01111… 10         1340344… C/C   C/C   C/C   C/C   C/C   C/C   C/C   -/-  
+## 10 PZA00342… 10         1301707… G/G   G/G   A/G   A/G   G/G   A/G   G/G   G/G  
 ## # ℹ 43 more rows
 ## # ℹ 967 more variables: TA057 &lt;chr&gt;, TA137 &lt;chr&gt;, TA153 &lt;chr&gt;, TA205 &lt;chr&gt;,
 ## #   TA217 &lt;chr&gt;, TA242 &lt;chr&gt;, TA285 &lt;chr&gt;, TA293 &lt;chr&gt;, TAMex0091.1 &lt;chr&gt;,

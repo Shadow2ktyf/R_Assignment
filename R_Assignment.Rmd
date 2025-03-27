@@ -104,10 +104,10 @@ maize_chromosome_decrease <- function(chr) {
   joint_snp_maize %>%
     filter(Chromosome == chr) %>%
     mutate(Numeric_Position = suppressWarnings(as.numeric(Position))) %>%  
-    arrange(is.na(Numeric_Position), desc(Numeric_Position)) %>%  
+    arrange(is.na(Numeric_Position), desc(Numeric_Position)) %>%
     select(-Numeric_Position) %>%
-    mutate(across(4:ncol(.), ~ ifelse(. == "?/?", "-/-", .))) %>% 
-    mutate(across(4:ncol(.), as.character)) %>%
+    mutate(across(4:ncol(.), as.character)) %>%  # 确保全部是字符型
+    mutate(across(4:ncol(.), ~ replace(., . == "?/?", "-/-"))) %>%  # 安全替换，不影响其他值
     write_tsv(paste0("maize_data/maize_chrom", chr, "_decrease.txt"))
 }
 
@@ -130,11 +130,11 @@ lapply(1:10, teosinte_chromosome_increase)
 teosinte_chromosome_decrease <- function(chr) {
   joint_snp_teosinte %>%
     filter(Chromosome == chr) %>%
-    mutate(Numeric_Position = suppressWarnings(as.numeric(Position))) %>%  
-    arrange(is.na(Numeric_Position), desc(Numeric_Position)) %>%  
+    mutate(Numeric_Position = suppressWarnings(as.numeric(Position))) %>% 
+    arrange(is.na(Numeric_Position), desc(Numeric_Position)) %>% 
     select(-Numeric_Position) %>%  
-    mutate(across(4:ncol(.), ~ ifelse(. == "?/?", "-/-", .))) %>%  
     mutate(across(4:ncol(.), as.character)) %>%
+    mutate(across(4:ncol(.), ~ replace(., . == "?/?", "-/-"))) %>%  
     write_tsv(paste0("teosinte_data/teosinte_chrom", chr, "_decrease.txt"))
 }
 
